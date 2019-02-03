@@ -1,0 +1,756 @@
+<html>
+    <head>
+        <script type="text/javascript">
+            function calibrate(){
+                document.getElementById("user_count").value = 50;
+                document.getElementById("group_count").value = 1;
+                document.getElementById("page_count").value = 1;
+                document.getElementById("comment_page_count").value = 0;
+                update_user_count();
+                update_response_group_count();
+                update_page_count();
+            }
+
+            function update_user_count(){
+                var c = document.getElementById("user_count").value;
+                if(c < 1){
+                    document.getElementById("user_count").value = 1;
+                    c = 1;
+                }
+                var e_list = document.getElementById("email_list");
+                var p_list = document.getElementById("pass_list");
+
+                var prev_c = e_list.childElementCount;                
+                if(prev_c < c){
+                    for(var i=0; i<(c-prev_c); i++){
+                        var id = prev_c + i;
+
+                        var new_e = document.createElement("div");
+                        new_e.setAttribute("class", "ep_container");
+                        var new_e_i = document.createElement("input");
+                        new_e_i.setAttribute("type", "text");
+                        new_e_i.setAttribute("id", "e_" + id);
+                        new_e_i.setAttribute("class", "email");
+                        new_e_i.setAttribute("placeholder", "Email " + (id + 1));
+                        //
+                        new_e_i.setAttribute("value", "fashark@linuxmail.org");
+                        //
+                        new_e.appendChild(new_e_i);
+                        e_list.appendChild(new_e);
+
+                        var new_p = document.createElement("div");
+                        new_p.setAttribute("class", "ep_container");
+                        var new_p_i = document.createElement("input");
+                        new_p_i.setAttribute("type", "text");
+                        new_p_i.setAttribute("id", "p_" + id);
+                        new_p_i.setAttribute("class", "password");
+                        new_p_i.setAttribute("placeholder", "Password " + (id + 1));
+                        //
+                        new_p_i.setAttribute("value", "chelseachamp");
+                        //
+                        new_p.appendChild(new_p_i);
+                        p_list.appendChild(new_p);
+                    }
+                }
+                else{
+                    for(var i=0; i<(prev_c-c); i++){
+                        e_list.removeChild(e_list.lastChild);
+                        p_list.removeChild(p_list.lastChild);
+                    }
+                }
+            }
+
+            var current_tab = 0;
+            function change_tab(x){
+                if(x != current_tab){
+                    document.getElementById("tab_" + x).className = "tab_open";
+                    document.getElementById("tab_" + current_tab).className = "tab";
+
+                    document.getElementById("tab_content_" + x).style.display = "block";
+                    document.getElementById("tab_content_" + current_tab).style.display = "none";
+
+                    current_tab = x;
+                }
+            }
+
+            function update_response_group_count(){
+                var c = document.getElementById("group_count").value;
+                if(c < 1){
+                    document.getElementById("group_count").value = 1;
+                    c = 1;
+                }
+                var kr_list = document.getElementById("keyword_reply_block_list");
+
+                var prev_c = kr_list.childElementCount;  
+                if(prev_c < c){
+                    for(var i=0; i<(c-prev_c); i++){
+                        var id = prev_c + i;
+
+                        var new_kr = document.createElement("tr");
+                        new_kr.setAttribute("class", "keyword_reply_block");
+                        kr_list.appendChild(new_kr);
+
+                        var new_td = document.createElement("td");
+                        new_kr.appendChild(new_td);
+
+                        var new_k = document.createElement("textarea");
+                        new_k.setAttribute("class", "k_tarea");
+                        new_k.setAttribute("placeholder", "Keyword set " + (id+1) + " (Separated by ',')");
+                        new_k.setAttribute("id", "k_" + id);
+                        //
+                        new_k.innerText = "dota,update,major";
+                        //
+                        new_td.appendChild(new_k);
+
+                        var new_rc = document.createElement("input");
+                        new_rc.setAttribute("class", "reply_count");
+                        new_rc.setAttribute("onchange", "update_reply_list_count(this)");
+                        new_rc.setAttribute("type", "number");
+                        new_rc.setAttribute("value", "3");
+                        new_rc.setAttribute("id", "r_c_" + id);
+                        new_rc.setAttribute("data_k", id);
+                        new_td.appendChild(new_rc);
+
+                        var new_rb = document.createElement("div");
+                        new_rb.setAttribute("class", "reply_list");
+                        new_rb.setAttribute("id", "r_l_" + id);
+                        new_td.appendChild(new_rb);
+
+                        for(var j=0; j<3; j++){
+                            var new_r = document.createElement("input");
+                            new_r.setAttribute("type", "text");
+                            new_r.setAttribute("class", "reply_box");
+                            new_r.setAttribute("placeholder", "Reply " + (j+1));
+                            new_r.setAttribute("id", "r_" + id + "_" + j);
+                            //
+                            new_r.setAttribute("value", j);
+                            //
+                            new_rb.appendChild(new_r);
+                        }
+                    }
+                }
+                else{
+                    for(var i=0; i<(prev_c-c); i++){
+                        kr_list.removeChild(kr_list.lastChild);
+                    }
+                }                
+            }
+
+            function update_reply_list_count(x){
+                var k = x.getAttribute("data_k");
+                var p = document.getElementById("r_l_" + k);
+                var prev_c = p.childElementCount;
+                var c = x.value;
+                if(c < 1){
+                    x.value = 1;
+                    c = 1;
+                }
+                if(c > prev_c){
+                    for(var i=prev_c; i<c; i++){
+                        var new_r = document.createElement("input");
+                        new_r.setAttribute("type", "text");
+                        new_r.setAttribute("placeholder", "Reply " + (i+1));
+                        new_r.setAttribute("class", "reply_box");
+                        new_r.setAttribute("id", "r_" + k + "_" + i);
+                        p.appendChild(new_r);
+                    }
+                }
+                else{
+                    for(var i=0; i<(prev_c-c); i++){
+                        p.removeChild(p.lastChild);
+                    }
+                }  
+            }
+
+            function update_page_count(){
+                var c = document.getElementById("page_count").value;
+                if(c < 1){
+                    document.getElementById("page_count").value = 1;
+                    c = 1;
+                }
+                var p = document.getElementById("p_list");
+                var prev_c = p.childElementCount;
+                if(c > prev_c){
+                    for(var i=prev_c; i<c; i++){                        
+                        var n = document.createElement("div");
+                        p.appendChild(n);
+
+                        var new_p = document.createElement("input");
+                        new_p.setAttribute("type", "text");
+                        new_p.setAttribute("class", "page_link");
+                        new_p.setAttribute("placeholder", "Page " + (i+1));
+                        new_p.setAttribute("id", "p_l_" + i);
+                        //
+                        new_p.setAttribute("value", "http://m.facebook.com/dota2");
+                        //
+                        n.appendChild(new_p);
+
+                        new_p = document.createElement("input");
+                        new_p.setAttribute("type", "date");
+                        new_p.setAttribute("class", "page_date");
+                        new_p.setAttribute("id", "p_d_" + i);                        
+                        n.appendChild(new_p);                       
+
+                    }
+                }
+                else{
+                    for(var i=prev_c; i>c; i--){
+                        p.removeChild(p.lastChild);
+                    }
+                }
+            }
+
+            function start_reply(){
+                document.getElementById("status").style.display = "block";
+                document.getElementById("status_header").innerText = "Logging in all the accounts...";
+                document.getElementById("comments_monitored").innerText = 0;
+                document.getElementById("comments_replied").innerText = 0;
+
+                // MAKE ACCOUNT LIST
+                var empty_prompted = false;
+                var c = document.getElementById("user_count").value;
+                var account_list = [];
+                for(var i=0; i<c; i++){
+                    var e = document.getElementById("e_" + i).value;
+                    var p = document.getElementById("p_" + i).value;
+                    if(e != '' && p != ''){
+                        account_list.push([e, p]);
+                    }
+                    else{
+                        if(!empty_prompted){
+                            empty_prompted = confirm("Some fields in Accounts list were found empty. Do you want to skip them and continue?");
+                            if(!empty_prompted){
+                                return;
+                            }
+                        }
+                    }
+                }
+                // MAKE KEYWORD-REPLY LIST
+                empty_prompted = false;
+                c = document.getElementById("group_count").value;
+                var kr_group_list = [];
+                for(var i=0; i<c; i++){
+                    var k = document.getElementById("k_" + i).value;
+                    if(k == ''){
+                        if(!empty_prompted){
+                            empty_prompted = confirm("Some fields in Keyword-Reply list were found empty. Do you want to skip them and continue?");
+                            if(!empty_prompted){
+                                return;
+                            }
+                        }                        
+                    }
+                    else{
+                        var rc = document.getElementById("r_c_" + i).value;
+                        var replies = [];
+                        for(var j=0; j<rc; j++){
+                            var r = document.getElementById("r_" + i + "_" + j).value;
+                            if(r != ''){
+                                replies.push(r);
+                            }
+                            else{
+                                if(!empty_prompted){
+                                    empty_prompted = confirm("Some fields in Keyword-Reply list were found empty. Do you want to skip them and continue?");
+                                    if(!empty_prompted){
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                        if(replies.length > 0){
+                            kr_group_list.push([k, replies]);
+                        }
+                    }
+                }
+                // MAKE PAGES LIST
+                empty_prompted = false;
+                c = document.getElementById("page_count").value;
+                var comment_page_count = document.getElementById("comment_page_count").value;
+                var page_list = [];
+                for(var i=0; i<c; i++){
+                    var p = document.getElementById("p_l_" + i).value;
+                    var d = document.getElementById("p_d_" + i).value;
+                    if(p != '' && d != ''){
+                        d = d.split("-").reverse();
+                        page_list.push([p, d]);
+                    }
+                    else{
+                        if(!empty_prompted){
+                            empty_prompted = confirm("Some fields in Page list were found empty. Do you want to skip them and continue?");
+                            if(!empty_prompted){
+                                return;
+                            }
+                        }
+                    }
+                }
+                // DO WE HAVE SOME DATA TO WORK WITH ?
+                if(account_list.length > 0 && kr_group_list.length > 0 && page_list.length > 0){
+                    var xhttp = new XMLHttpRequest();
+                    xhttp.onreadystatechange = function() {
+                        if (this.readyState == 4 && this.status == 200) {
+                            if(this.responseText == "0"){
+                                document.getElementById("status_header").innerText = "Comments are being monitored...";
+                                status_interval_handle = window.setInterval(get_status, 5000);
+                            }
+                            else if(this.responseText == "1"){
+                                document.getElementById("status_header").innerText = "All the mentioned accounts failed to login...";
+                            }
+                        }
+                    };
+                    xhttp.open("POST", "start", true);
+                    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    xhttp.send("data="+JSON.stringify([account_list, kr_group_list, page_list, comment_page_count]));
+                }
+                else{
+                    alert("Insufficient data to proceed with..");
+                }
+            }
+
+            var status_interval_handle;
+            function abort_monitor(){
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        document.getElementById("status").style.display = "none"; 
+                        window.clearInterval(status_interval_handle);
+                    }
+                };
+                xhttp.open("GET", "abort", true);
+                xhttp.send();
+            }
+
+            function get_status(){
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        var s = this.responseText;
+                        s = s.replace(/'/g,'"');
+                        var json = JSON.parse(s);
+                        if(json.hasOwnProperty('dead')){
+
+                        }
+                        else{
+                            document.getElementById("comments_monitored").innerText = json['cm'];
+                            document.getElementById("comments_replied").innerText = json['cr'];
+                            for(var i=0; i<json['log'].length; i++){
+                                document.getElementById("status_log").innerText += json['log'][i] + "\n";
+                            }
+                        }
+                    }
+                };
+                xhttp.open("GET", "status", true);
+                xhttp.send();                
+            }
+
+            function read_csv_accounts(){
+                var f = document.getElementById("account_csv").files[0];
+                var reader = new FileReader();
+                reader.onload = function(){
+                    var res = reader.result;
+                    res = res.split("\r\n");
+                    document.getElementById("user_count").value = res.length;
+                    update_user_count();
+                    for(var i=0; i<res.length; i++){
+                        var ep = res[i].split(",");
+                        document.getElementById("e_" + i).value = ep[0];
+                        document.getElementById("p_" + i).value = ep[1];
+                    }
+                };
+                reader.readAsText(f);
+            }
+
+            function read_csv_kr(){
+                var f = document.getElementById("kr_csv").files[0];
+                var reader = new FileReader();
+                reader.onload = function(){
+                    var res = reader.result;
+                    res = res.split("\r\n");
+                    document.getElementById("group_count").value = (res.length / 2);
+                    update_response_group_count();
+                    for(var i=0; i<res.length; i+=2){
+                        var keys = res[i];
+                        document.getElementById("k_" + (i/2)).value = keys;
+                        var replies = res[i+1].split(",");
+                        var rc = document.getElementById("r_c_" + (i/2));
+                        rc.value = replies.length;
+                        update_reply_list_count(rc);
+                        for(var j=0; j<replies.length; j++){
+                            document.getElementById("r_" + (i/2) + "_" + j).value = replies[j];
+                        }
+                    }
+                };
+                reader.readAsText(f);                
+            }
+
+            function read_csv_page(){
+                var f = document.getElementById("page_csv").files[0];
+                var reader = new FileReader();
+                reader.onload = function(){
+                    var res = reader.result;
+                    res = res.split("\r\n");
+                    document.getElementById("page_count").value = res.length;
+                    update_page_count();
+                    for(var i=0; i<res.length; i++){
+                        var pd = res[i].split(",");
+                        document.getElementById("p_l_" + i).value = pd[0];
+                        document.getElementById("p_d_" + i).value = pd[1];
+                    }
+                };
+                reader.readAsText(f);                
+            }
+
+            function create_csv_accounts(){
+                var c = document.getElementById("user_count").value;
+                var text = "";
+                for(var i=0; i<c; i++){
+                    text += document.getElementById("e_" + i).value + ",";
+                    if(i<(c-1)){
+                        text += document.getElementById("p_" + i).value + "\r\n";
+                    }
+                    else{
+                        text += document.getElementById("p_" + i).value;                        
+                    }
+                }
+                var data = new Blob([text], {type: 'text/plain'});
+                var a = document.createElement("a");
+                a.download = "accounts.csv";
+                a.href = window.URL.createObjectURL(data);
+                a.click();
+            }
+
+            function create_csv_kr(){
+                var c = document.getElementById("group_count").value;
+                var text = "";
+                for(var i=0; i<c; i++){
+                    text += document.getElementById("k_" + i).value + "\r\n";
+                    var rc = document.getElementById("r_c_" + i).value;
+                    for(var j=0; j<rc; j++){
+                        if(j<(rc-1)){
+                            text += document.getElementById("r_" + i + "_" + j).value + ",";
+                        }
+                        else{
+                            text += document.getElementById("r_" + i + "_" + j).value;
+                        }
+                    }
+                    if(i<(c-1)){
+                        text += "\r\n";
+                    }
+                }
+                var data = new Blob([text], {type: 'text/plain'});
+                var a = document.createElement("a");
+                a.download = "replies.csv";
+                a.href = window.URL.createObjectURL(data);
+                a.click();
+            }
+
+            function create_csv_pages(){
+                var c = document.getElementById("page_count").value;
+                var text = "";
+                for(var i=0; i<c; i++){
+                    text += document.getElementById("p_l_" + i).value + ",";
+                    if(i<(c-1)){
+                        text += document.getElementById("p_d_" + i).value + "\r\n";
+                    }
+                    else{
+                        text += document.getElementById("p_d_" + i).value;                        
+                    }
+                }
+                var data = new Blob([text], {type: 'text/plain'});
+                var a = document.createElement("a");
+                a.download = "pages.csv";
+                a.href = window.URL.createObjectURL(data);
+                a.click();
+            }      
+        </script>
+        <style>
+            body{
+                margin: 0px;
+                padding: 0px;
+            }
+            #header{
+                height: 5vh;
+                width: 100%;
+            }
+            #options{
+                height: 5vh;
+                width: 100%;
+            }
+            .tab{
+                width: 33.3333%;
+                float: left;
+                height: 100%;
+                text-align: center;
+                line-height: 5vh;
+                font-family: cursive;
+                background: #222222;
+                color: #FFFFFF;
+            }
+            .tab:hover{
+                background: #333333;
+                cursor: pointer;
+                color: #FFFFFF;
+            }
+            .tab_open{
+                width: 33.3333%;
+                float: left;
+                height: 100%;
+                text-align: center;
+                line-height: 5vh;
+                font-family: cursive;      
+                background: #FFFFFF;
+                color: #000000;
+            }
+            .tab_open:hover{
+                cursor: default;
+            }
+            #options{
+                height: 10vh;
+                width: 100%;
+            }
+            #user_count, #group_count, #account_csv, #kr_csv, #page_csv{
+                width: 25%;
+                height: 5vh;
+                margin-left: 37.5%;
+                margin-top: 5vh;
+                font-family: cursive;
+            }
+            .ep_block{
+                width: 50%;  
+                float: left;
+            }
+            .ep_container{
+                width: 100%;
+                height: 6vh;
+            }
+            .email, .password{
+                height: 5vh;
+                width: 50%;
+            }
+            .email{
+                margin-left: 45%;
+            }
+            .password{
+                margin-left: 5%;
+            }
+            .br_button{
+                height: 65px;
+                width: 65px;
+                background: #222222;
+                border-radius: 50%;
+                text-align: center;
+                line-height: 65px;
+                font-family: cursive;
+                color: #FFFFFF;
+                border: 5px solid #222222;
+                position: fixed;
+                right: 5%;
+                bottom: 5%;
+            }
+            .br_button:hover{
+                cursor: pointer;
+                background: #333333;
+            }
+            #tab_content_1, #tab_content_2{
+                display: none;
+            }
+            .kr_block{
+                width: 100%;
+            }
+            .keyword_reply_block{
+                width: 100%;
+            }
+
+            .k_tarea{
+                resize: none;
+                width: 25%;
+                margin-left: 20%;
+                height: 100px;
+                text-align: center;
+                line-height: 100px;
+                float: left;
+            }
+            .reply_count{
+                width: 6%;
+                margin-left: 2%;
+                height: 50px;
+                float: left;
+                margin-top: 25px;
+                text-align: center;
+            }
+            .reply_list{
+                width: 25%;
+                margin-left: 2%;
+                background: #F00;
+                float: left;
+            }
+            .reply_box{
+                width: 100%;
+                height: 5vh;
+            }
+
+            .page_link{
+                height: 50px;
+                margin-left: 25%;
+                width: 40%;
+                margin-top: 20px;
+            }
+
+            .page_date{
+                height: 50px;
+                width: 10%;
+                margin-top: 20px;                
+            }
+            #status{
+                height: 100vh;
+                width: 100%;
+                overflow: hidden; 
+                position: absolute;
+                left: 0px;
+                top: 0px;    
+                display: none;
+            }
+            #ui_disable_overlay{
+                height: 100vh;
+                width: 100%;
+                overflow: hidden;
+                background: #000000;
+                opacity: 0.7;
+                position: absolute;
+                left: 0px;
+                top: 0px;
+                z-index: 1;
+            }
+            #status_monitor{
+                position: absolute;
+                width: 50%;
+                margin-left: 25%;
+                height: 50vh;
+                margin-top: 25vh;
+                background: #F7F7F7;
+                border-radius: 20px;
+                opacity: 1;
+                z-index: 10;
+            }
+            #abort_button{
+                font-family: cursive;
+                width: 70px;
+                height: 70px;
+                text-align: center;
+                line-height: 70px;
+                border-radius: 50%;
+                background: #AA2222;
+                border: 2px solid #AA2222;
+                color: #FFFFFF;
+                position: absolute;
+                bottom: 5vh;
+                right: 5vh;
+            }
+            #abort_button:hover{
+                cursor: pointer;
+                background: #FFFFFF;    
+                color: #AA2222;
+            }
+            #status_header{
+                font-family: cursive;
+                color: #009900;
+                font-size: 20px;
+                margin-left: 50px;
+            }
+            #comments_monitored{
+                font-family: cursive;
+                font-style: italic;
+            }
+            #comments_replied{
+                font-family: cursive;     
+                font-style: italic;           
+            }
+            .comments_label{
+                font-family: cursive;  
+                margin-left: 15%;
+                font-size: 1.1vw;
+            }
+            .pages_option{
+                width: 20%;
+                height: 5vh;
+                margin-top: 5vh;
+                font-family: cursive;
+            }
+            #page_count{
+                margin-left: 30%;
+            }
+            #status_log{
+                margin-left: 15%;
+                height: 40%;
+                width: 60%;
+            }
+            .bl_button{
+                height: 65px;
+                width: 65px;
+                background: #222222;
+                border-radius: 50%;
+                text-align: center;
+                line-height: 65px;
+                font-family: cursive;
+                color: #FFFFFF;
+                border: 5px solid #222222;
+                position: fixed;
+                left: 5%;
+                bottom: 5%;
+            }
+            .bl_button:hover{
+                cursor: pointer;
+                background: #333333;
+            }
+        </style>
+    </head>
+    <body onload="calibrate()">
+        <div id="header">
+            <div class="tab_open" id="tab_0" onclick="change_tab(0)">Accounts</div>
+            <div class="tab" id="tab_1" onclick="change_tab(1)">Replies</div>
+            <div class="tab" id="tab_2" onclick="change_tab(2)">Pages</div>
+        </div>
+        <div>
+            <div id="tab_content_0">
+                <div id="options">
+                    <input type="number" placeholder="No. of accounts" id="user_count" min="1" onchange="update_user_count()"><br>
+                    <input type="file" placeholder="Account csv file" accept=".csv" id="account_csv" min="1" onchange="read_csv_accounts()"><br>    
+                </div><br><br><br><br><br>
+                <div id="email_list" class="ep_block"></div>
+                <div id="pass_list" class="ep_block"></div>
+                <div onclick="create_csv_accounts()" class="bl_button">Get CSV</div>
+                <div onclick="change_tab(1)" class="br_button">Next</div>
+            </div>
+            <div id="tab_content_1">
+                <div id="options">
+                    <input type="number" placeholder="No. of response groups" id="group_count" min="1" onchange="update_response_group_count()">
+                    <input type="file" placeholder="KeyReply csv file" accept=".csv" id="kr_csv" min="1" onchange="read_csv_kr()"><br>   
+                </div><br><br><br><br><br>
+                <table id="keyword_reply_block_list" class="kr_block" cellspacing="50px">   
+                </table>
+                <div onclick="create_csv_kr()" class="bl_button">Get CSV</div>
+                <div onclick="change_tab(2)" class="br_button">Next</div>
+            </div>
+            <div id="tab_content_2">
+                <div id="options">
+                    <input type="number" class="pages_option" placeholder="No. of pages" id="page_count" min="1" onchange="update_page_count()">
+                    <input type="number" class="pages_option" placeholder="Max number of comment pages to be monitored" min="0" id="comment_page_count"><br>
+                    <input type="file" placeholder="Page csv file" accept=".csv" id="page_csv" min="1" onchange="read_csv_page()"><br>  
+                </div><br><br><br><br><br>
+                <div id="p_list">
+                </div>
+                <div onclick="create_csv_pages()" class="bl_button">Get CSV</div>
+                <div onclick="start_reply()" class="br_button">Start</div>   
+                <div id="status">
+                    <div id="ui_disable_overlay"></div>
+                    <div id="status_monitor">
+                        <br><br>
+                        <label id="status_header">Logging in all the accounts...</label><br><br>
+                        <label class="comments_label">Comments read : </label><label id="comments_monitored"></label><br>
+                        <label class="comments_label">Comments replied : </label><label id="comments_replied"></label><br>
+                        <textarea disabled id="status_log"></textarea><br>
+                        <div onclick="abort_monitor()" id="abort_button">Abort</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
